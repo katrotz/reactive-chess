@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, Alert, PropTypes, Image } from 'react-native';
 import styled from 'styled-components/native';
-import _ from 'lodash-es';
 
 import Piece from './Piece';
 
+const COLORS = {
+    light: '#D08B46',
+    dark: '#FFCF9D'
+};
+
 const TouchableSquare = styled.TouchableOpacity`
-    background: ${props => props.isDark ? 'gray' : 'white'};
+    background: ${props => COLORS[props.color]};
     aspectRatio: 1;
     justifyContent: center;
     alignItems: center;
@@ -14,10 +18,23 @@ const TouchableSquare = styled.TouchableOpacity`
     height: 12.5%;
 `;
 
-TouchableSquare.defaultProps = {};
+TargetSquare = styled.View`
+    backgroundColor: ${props => props.isLegalTarget ? 'rgba(255, 249, 158,0.5)' : 'rgba(155,199,0,0)'};
+    width: 100%;
+    height: 100%;
+    justifyContent: center;
+    alignItems: center;
+`;
 
 export default class Square extends Component {
-    static COLUMNS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    static defaultProps = {
+        position: 'a1',
+        color: 'dark',
+        size: 30,
+        piece: null,
+        isLegalTarget: false,
+        onSelect: () => {}
+    };
 
     constructor(props) {
         super(...arguments);
@@ -27,63 +44,23 @@ export default class Square extends Component {
          * @type {null|TouchableOpacity}
          */
         this.element = null;
-
-        /**
-         * Is the current square a dark one
-         * @type {boolean}
-         */
-        this.isDark = !((this.props.col + this.props.row) % 2);
-    }
-
-    /**
-     * The column letter corresponding to the column index according to the standard algebraic notation
-     * @returns {string}
-     */
-    get file() {
-        return Square.COLUMNS[this.props.col - 1];
-    }
-
-    /**
-     * The row number according to the standard algebraic notation
-     * @returns {number}
-     */
-    get rank() {
-        return this.props.row;
-    }
-
-    /**
-     * The coordinates of the square according to the standard algebraic notation
-     * @returns {[string, number]}
-     */
-    get coordinates() {
-        return [this.file, this.rank];
-    }
-
-    get isActive() {
-        return _.isEqual(this.coordinates, this.props.activeCoordinates)
-    }
-
-    get isValidTarget() {
-        if (!this.props.activeCoordinates) return false;
-        return (this.coordinates[0] === this.props.activeCoordinates[0])
-            || this.coordinates[1] === this.props.activeCoordinates[1];
     }
 
     render() {
         return (
-            <TouchableSquare isDark={this.isDark} isActive={this.isActive} onPress={() => this.onPress_()} activeOpacity={0.7} innerRef={(ref) => (this.element = ref)}>
-                <View>
+            <TouchableSquare color={this.props.color} isLegalTarget={this.props.isLegalTarget} onPress={() => this.onPress_()} activeOpacity={1} innerRef={(ref) => (this.element = ref)}>
+                <TargetSquare isLegalTarget={this.props.isLegalTarget}>
                     {this.props.piece
-                        ? <Piece piece={this.props.piece} size={30}></Piece>
-                        : <Text></Text>
+                        // ? <Text>{this.props.piece.color + this.props.piece.type}</Text>
+                        ? <Piece piece={this.props.piece} size={this.props.size}></Piece>
+                        : <Text style={{fontSize: 9, color: '#d9ac7d'}}>{this.props.position}</Text>
                     }
-                </View>
+                </TargetSquare>
             </TouchableSquare>
         );
     }
 
     onPress_() {
-        this.props.onSelect(this.coordinates);
-        return this;
+        this.props.onSelect(this.props.position);
     }
 }
