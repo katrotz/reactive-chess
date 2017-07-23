@@ -15,34 +15,13 @@ export default class App extends Component {
     constructor() {
         super(...arguments);
 
-        this.state = {
-            game: {
-                fen: null
-            },
-            board: {
-                inverted: false
-            }
-        };
-    }
-
-    invert() {
-        this.setState({
-            board: {
-                inverted: !this.state.board.inverted
-            }
-        });
+        this.state = {};
     }
 
     render() {
-        const fen = this.state.game.fen;
-        const inverted = this.state.board.inverted;
         return (
             <Container>
-                <Text>{inverted ? 'White' : 'Black'}</Text>
-                <Board size="300" inverted={inverted} fen={fen}></Board>
-                <Text>{inverted ? 'Black' : 'White'}</Text>
-
-                <Button onPress={() => {this.invert()}} title="Invert"/>
+                <Board size="300"></Board>
             </Container>
         );
     }
