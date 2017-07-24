@@ -33,7 +33,7 @@ export default class Cemetery extends Component {
         return (
             <CemeteryView>
                 {_.size(this.props.pieces)
-                    ? this.props.pieces.map((type) => <Piece piece={{type, color}} size={20}></Piece>)
+                    ? this.props.pieces.map((type, index) => <Piece key={type + index} piece={{type, color}} size={20}></Piece>)
                     : <FallbackText>Empty</FallbackText>
                 }
             </CemeteryView>

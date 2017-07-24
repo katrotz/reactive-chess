@@ -41,11 +41,21 @@ export default class Board extends Component {
 
         this.chess = new Chess();
 
-        this.resetState();
+        this.state = {
+            inverted: false,
+            activePosition: null,
+            legalMoves: [],
+            captured: {
+                w: [],
+                b: []
+            },
+            fen: this.chess.fen()
+        };
     }
 
     resetState() {
         this.chess.reset();
+
         this.setState({
             inverted: false,
             activePosition: null,
@@ -118,8 +128,8 @@ export default class Board extends Component {
                 <Cemetery pieces={this.state.captured[this.state.inverted ? 'b' : 'w']} color={this.state.inverted ? 'w' : 'b'}></Cemetery>
 
                 <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                    <Button onPress={() => {this.setState({inverted: !this.state.inverted})}} title="Flip Board"/>
-                    <Button onPress={() => {this.resetState()}} title="Reset"/>
+                    <Button onPress={() => {this.setState({inverted: !this.state.inverted})}} title="Flip Board" color="#4CD964"/>
+                    <Button onPress={() => {this.resetState()}} title="Reset" color="#FF3B30"/>
                 </View>
             </View>
         );
