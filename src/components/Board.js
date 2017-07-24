@@ -25,6 +25,16 @@ export default class Board extends Component {
 
     static COLUMNS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
+    static FLAGS = {
+        NON_CAPTURE: 'n',
+        TWO_SQUARES_PUSH: 'b',
+        EN_PASSANT_CAPTURE: 'e',
+        CAPTURE: 'c',
+        PROMOTION: 'p',
+        KINGSIDE_CASTLING: 'k',
+        QUEENSIDE_CASTLING: 'q'
+    };
+
     constructor() {
         super(...arguments);
 
@@ -34,6 +44,10 @@ export default class Board extends Component {
             inverted: false,
             activePosition: null,
             legalMoves: [],
+            captured: {
+                w: [],
+                b: []
+            },
             fen: this.chess.fen()
         };
     }
@@ -94,7 +108,7 @@ export default class Board extends Component {
                 </BoardView>
 
                 <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                    <Button onPress={() => {this.setState({inverted: !this.state.inverted})}} title="Invert"/>
+                    <Button onPress={() => {this.setState({inverted: !this.state.inverted})}} title="Flip Board"/>
                     <Button onPress={() => {this.chess.reset(); this.setState({fen: this.chess.fen()})}} title="Reset"/>
                 </View>
             </View>
@@ -132,27 +146,19 @@ export default class Board extends Component {
             });
 
             if (success) {
+                if (_.includes(success.flags, Board.FLAGS.CAPTURE)) {
+                    this.state.captured[success.color].push(success.captured)
+                }
+
                 this.setState({
                     activePosition: null,
                     legalMoves: [],
+                    captured: this.state.captured,
                     fen: this.chess.fen(),
                     invert: !this.state.inverted
                 });
             }
         }
-
-        return this;
-    }
-
-    isValidMove_(newPosition) {
-        const activePosition = this.state.activePosition;
-        // Todo validate move
-        return activePosition ? newPosition : true;
-    }
-
-    doHandleMove_(coordinates) {
-        // Todo chess js
-        this.setState({activePosition: null});
 
         return this;
     }
