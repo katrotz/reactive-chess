@@ -5,6 +5,7 @@ import _ from 'lodash-es';
 import { Chess } from 'chess.js';
 
 import Square from './Square';
+import Cemetery from './Cemetery';
 
 const BoardView = styled.View`
     width: ${props => props.boardSize};
@@ -40,7 +41,12 @@ export default class Board extends Component {
 
         this.chess = new Chess();
 
-        this.state = {
+        this.resetState();
+    }
+
+    resetState() {
+        this.chess.reset();
+        this.setState({
             inverted: false,
             activePosition: null,
             legalMoves: [],
@@ -49,7 +55,7 @@ export default class Board extends Component {
                 b: []
             },
             fen: this.chess.fen()
-        };
+        });
     }
 
     /**
@@ -85,6 +91,8 @@ export default class Board extends Component {
 
         return (
             <View>
+                <Cemetery pieces={this.state.captured[this.state.inverted ? 'w' : 'b']} color={this.state.inverted ? 'b' : 'w'}></Cemetery>
+
                 <BoardView boardSize={this.props.size}>
                     {rowIndexes.map((row) =>
                         <RowView key={row.toString()}>
@@ -107,9 +115,11 @@ export default class Board extends Component {
                     )}
                 </BoardView>
 
+                <Cemetery pieces={this.state.captured[this.state.inverted ? 'b' : 'w']} color={this.state.inverted ? 'w' : 'b'}></Cemetery>
+
                 <View style={{flexDirection: 'row', justifyContent: 'center'}}>
                     <Button onPress={() => {this.setState({inverted: !this.state.inverted})}} title="Flip Board"/>
-                    <Button onPress={() => {this.chess.reset(); this.setState({fen: this.chess.fen()})}} title="Reset"/>
+                    <Button onPress={() => {this.resetState()}} title="Reset"/>
                 </View>
             </View>
         );

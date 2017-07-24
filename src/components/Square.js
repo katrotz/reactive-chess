@@ -19,7 +19,7 @@ const TouchableSquare = styled.TouchableOpacity`
 `;
 
 TargetSquare = styled.View`
-    backgroundColor: ${props => props.isLegalTarget ? 'rgba(255, 249, 158,0.5)' : 'rgba(155,199,0,0)'};
+    backgroundColor: ${props => props.isLegalTarget ? 'rgba(255, 249, 158, 0.5)' : 'rgba(155, 199, 0, 0)'};
     width: 100%;
     height: 100%;
     justifyContent: center;
