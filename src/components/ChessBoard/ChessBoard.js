@@ -1,27 +1,13 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import styled from 'styled-components/native';
+import { View, Button } from 'react-native';
 import _ from 'lodash-es';
 import { Chess } from 'chess.js';
 
-import Square from './Square';
-import Promotion from './Promotion';
-import Cemetery from './Cemetery';
+import ChessSquare from './../ChessSquare';
+import ChessCemetery from './../ChessCemetery';
+import { BoardView, RowView } from './styledComponents';
 
-const BoardView = styled.View`
-    width: ${props => props.boardSize};
-    height: ${props => props.boardSize};
-    border: solid black 2px;
-    justifyContent: center;
-    alignItems: center;
-`;
-
-const RowView = styled.View`
-    flexDirection: row;
-    zIndex: 100;
-`;
-
-export default class Board extends Component {
+export default class ChessBoard extends Component {
     static defaultProps = {
         size: 300
     };
@@ -62,6 +48,10 @@ export default class Board extends Component {
             inverted: false,
             activePosition: null,
             legalMoves: [],
+            promotion: {
+                position: null,
+                color: null
+            },
             captured: {
                 w: [],
                 b: []
@@ -77,7 +67,23 @@ export default class Board extends Component {
      * @returns {string}
      */
     getSquarePosition(row, col) {
-        return `${Board.COLUMNS[col - 1]}${row}`;
+        return `${ChessBoard.COLUMNS[col - 1]}${row}`;
+    }
+
+    /**
+     * Retrieves the square coordinates for an algebraic notation position
+     * @param {string} position The position to compute the coordinates for
+     * @returns {Array} The row and column number from 1 to 8
+     */
+    getSquareCoordinates(position) {
+        if (!_.isString(position) || _.size(position) !== 2) {
+            throw new Error('Failed to compute the coordinates due to an invalid position');
+        }
+
+        return [
+            Number(position[1]),
+            _.indexOf(ChessBoard.COLUMNS, position[0]) + 1
+        ];
     }
 
     /**
@@ -103,11 +109,11 @@ export default class Board extends Component {
 
         return (
             <View>
-                <Cemetery pieces={this.state.captured[this.state.inverted ? 'w' : 'b']} color={this.state.inverted ? 'b' : 'w'}></Cemetery>
+                <ChessCemetery pieces={this.state.captured[this.state.inverted ? 'w' : 'b']}
+                               color={this.state.inverted ? 'b' : 'w'}>
+                </ChessCemetery>
 
                 <BoardView boardSize={this.props.size}>
-                    <Promotion color="b" size={squareSize}/>
-
                     {rowIndexes.map((row) =>
                         <RowView key={row.toString()}>
                             {colIndexes.map((col) => {
@@ -116,20 +122,22 @@ export default class Board extends Component {
                                 const piece = this.chess.get(position);
                                 const isLegalTarget = _.includes(this.state.legalMoves, position);
 
-                                return <Square key={position}
+                                return <ChessSquare key={position}
                                                position={position}
                                                color={squareColor}
                                                isLegalTarget={isLegalTarget}
                                                piece={piece}
                                                size={squareSize}
-                                               onSelect={this.handleSquareSelect_.bind(this)}>
-                                </Square>
+                                               onSelect={this.handleSquareSelect_}>
+                                </ChessSquare>
                             })}
                         </RowView>
                     )}
                 </BoardView>
 
-                <Cemetery pieces={this.state.captured[this.state.inverted ? 'b' : 'w']} color={this.state.inverted ? 'w' : 'b'}></Cemetery>
+                <ChessCemetery pieces={this.state.captured[this.state.inverted ? 'b' : 'w']}
+                               color={this.state.inverted ? 'w' : 'b'}>
+                </ChessCemetery>
 
                 <View style={{flexDirection: 'row', justifyContent: 'center'}}>
                     <Button onPress={() => {this.setState({inverted: !this.state.inverted})}} title="Flip Board" color="#4CD964"/>
@@ -139,7 +147,7 @@ export default class Board extends Component {
         );
     }
 
-    handleSquareSelect_(position) {
+    handleSquareSelect_ = (position) => {
         if (!_.isString(position)) return this;
 
         const moveInProgress = Boolean(this.state.activePosition);
@@ -164,13 +172,22 @@ export default class Board extends Component {
                 });
             }
         } else {
+            const coordinates = this.getSquareCoordinates(position);
+            const color = this.chess.turn();
+
+            if ((coordinates[0] === 1 && color === 'b') || (coordinates[0] === 8 && color === 'w')) {
+                this.setState({
+                    promotion: {position, color}
+                });
+            }
+
             const success = this.chess.move({
                 from: this.state.activePosition,
                 to: position
             });
 
             if (success) {
-                if (_.includes(success.flags, Board.FLAGS.CAPTURE)) {
+                if (_.includes(success.flags, ChessBoard.FLAGS.CAPTURE)) {
                     this.state.captured[success.color].push(success.captured)
                 }
 
