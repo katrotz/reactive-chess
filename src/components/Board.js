@@ -5,6 +5,7 @@ import _ from 'lodash-es';
 import { Chess } from 'chess.js';
 
 import Square from './Square';
+import Promotion from './Promotion';
 import Cemetery from './Cemetery';
 
 const BoardView = styled.View`
@@ -17,6 +18,7 @@ const BoardView = styled.View`
 
 const RowView = styled.View`
     flexDirection: row;
+    zIndex: 100;
 `;
 
 export default class Board extends Component {
@@ -104,6 +106,8 @@ export default class Board extends Component {
                 <Cemetery pieces={this.state.captured[this.state.inverted ? 'w' : 'b']} color={this.state.inverted ? 'b' : 'w'}></Cemetery>
 
                 <BoardView boardSize={this.props.size}>
+                    <Promotion color="b" size={squareSize}/>
+
                     {rowIndexes.map((row) =>
                         <RowView key={row.toString()}>
                             {colIndexes.map((col) => {
