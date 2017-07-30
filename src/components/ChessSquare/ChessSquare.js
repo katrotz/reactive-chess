@@ -10,7 +10,8 @@ export default class ChessSquare extends Component {
         color: 'dark',
         size: 30,
         piece: null,
-        isLegalTarget: false,
+        isTarget: false,
+        isPromotion: false,
         onSelect: () => {}
     };
 
@@ -25,19 +26,20 @@ export default class ChessSquare extends Component {
     }
 
     render() {
-        const showPromotion = false;
+        const showPromotion = this.props.isPromotion;
+        const piece = this.props.piece;
 
         return (
             <TouchableSquare color={this.props.color}
-                             isLegalTarget={this.props.isLegalTarget}
+                             isTarget={this.props.isTarget}
                              onPress={() => this.onPress_()}
                              activeOpacity={1}
                              innerRef={(ref) => (this.element = ref)}>
                 {showPromotion
-                    ? <ChessPromotion piece={this.props.piece} size={this.props.size}/>
-                    : <TargetSquare isLegalTarget={this.props.isLegalTarget}>
-                        {this.props.piece
-                            ? <ChessPiece piece={this.props.piece} size={this.props.size}></ChessPiece>
+                    ? <ChessPromotion size={this.props.size}/>
+                    : <TargetSquare isTarget={this.props.isTarget}>
+                        {piece
+                            ? <ChessPiece piece={piece} size={this.props.size}></ChessPiece>
                             : <PositionText>{this.props.position}</PositionText>
                         }
                     </TargetSquare>}

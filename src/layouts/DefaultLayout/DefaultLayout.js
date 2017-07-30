@@ -7,7 +7,7 @@ export default class DefaultLayout extends Component {
     render() {
         return (
             <ContainerView>
-                <ChessBoard size="300"></ChessBoard>
+                <ChessBoard size={300}></ChessBoard>
             </ContainerView>
         );
     }
