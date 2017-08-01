@@ -14,17 +14,57 @@ export const defaultState = {
     move: {
         from: null,
         targetSquares: [],
-        promotion : null
+        promotionSquare : null
     }
 };
 
-export default (state = Object.assign({}, defaultState), action) => {
-    const square = _.get(action, 'payload.square');
+/**
+ * Performs a chess move and updates the state
+ * @param {Object} state The state object
+ * @param {string} from The "from" square
+ * @param {string} to The "to" square
+ * @param {string|null} promotion The promotion piece type if applicable
+ * @returns {Object} The updated state object
+ */
+const performMove = (state, from, to , promotion = null) => {
+    const move = lib.chess.game.move({ from, to, promotion });
 
+    if (!move) return state;
+
+    if (_.includes(move.flags, lib.chess.flags.CAPTURE)) {
+        state = capturePiece(state, {
+            color: lib.chess.alternateColor(move.color),
+            type: move.captured
+        });
+    }
+
+    state.board.turn = lib.chess.game.turn();
+    state.board.squares = lib.chess.getBoardSquares();
+    state.move.from = null;
+    state.move.targetSquares = [];
+    state.move.promotionSquare = null;
+
+    return state;
+};
+
+/**
+ * Updates the state with the captured piece
+ * @param {Object} state The state object
+ * @param {Object} piece The piece to capture
+ * @returns {Object} The updated state object
+ */
+const capturePiece = (state, piece) => {
+    const player = lib.chess.alternateColor(piece.color);
+
+    state.board.captured[player].push(piece);
+
+    return state;
+};
+
+export default (state = Object.assign({}, defaultState), action) => {
     switch (action.type) {
         case 'RESET_GAME':
             lib.chess.resetGame();
-
             return Object.assign({}, defaultState);
 
         case 'INVERT_BOARD':
@@ -32,77 +72,37 @@ export default (state = Object.assign({}, defaultState), action) => {
             return Object.assign({}, state);
 
         case 'PROMOTE':
-            const piece = action.payload.piece;
+            const promotionPiece = action.payload.piece;
 
-            if (!state.move.promotion) return state;
+            if (!state.move.promotionSquare) return state;
 
-            const success = lib.chess.game.move({
-                from: state.move.from,
-                to: state.move.promotion,
-                promotion: piece.type
-            });
+            state = performMove(state, state.move.from, state.move.promotionSquare, promotionPiece.type);
 
-            if (success) {
-                state.move.promotion = null;
-                state.board.turn = lib.chess.game.turn();
-                state.board.squares = lib.chess.getBoardSquares();
-                state.move.from = null;
-                state.move.targetSquares = [];
-                return Object.assign({}, state);
-            }
-
-            return state;
+            return Object.assign({}, state);
 
         case 'SELECT_SQUARE':
-            const moveInProgress = Boolean(state.move.from);
-            const isTarget = Boolean(_.includes(state.move.targetSquares, square));
-            const hasPiece = lib.chess.game.get(square);
+            const toSquare = _.get(action, 'payload.square');
+            const isTarget = Boolean(_.includes(state.move.targetSquares, toSquare));
+            const fromPiece = lib.chess.game.get(state.move.from);
+            const toPiece = lib.chess.game.get(toSquare);
 
-            if (!moveInProgress) {
-                const targetSquares = lib.chess.game.moves({square, verbose: true}).map(move => move.to);
-                return Object.assign({}, state, {move: {from: square, targetSquares}});
-            } else if (!isTarget) {
-                if (hasPiece) {
-                    const targetSquares = lib.chess.game.moves({square, verbose: true}).map(move => move.to);
-                    return Object.assign({}, state, {move: {from: square, targetSquares}});
-                } else {
-                    return Object.assign({}, state, {move: {from: null, targetSquares: []}});
-                }
-            } else {
-                const piece = lib.chess.game.get(state.move.from);
-                if (lib.chess.isPromotionMove(piece, square)) {
-                    state.move.promotion = square;
-
-                    return Object.assign({}, state);
-                }
-
-                const success = lib.chess.game.move({
-                    from: state.move.from,
-                    to: square
-                });
-
-                if (success) {
-                    if (_.includes(success.flags, lib.chess.flags.CAPTURE)) {
-                        const capturedColor = success.color === 'w' ? 'b' : 'w';
-
-                        const piece = {
-                            color: capturedColor,
-                            type: success.captured
-                        };
-                        const player = (piece.color === 'w') ? 'b' : 'w';
-                        state.board.captured[player].push(piece);
-                    }
-
-                    state.board.turn = lib.chess.game.turn();
-                    state.board.squares = lib.chess.getBoardSquares();
-                    state.move.from = null;
-                    state.move.targetSquares = [];
-                    return Object.assign({}, state);
-                }
-
-                return state;
+            // There is no move in progress or during the move in progress an invalid "to" square is selected
+            if (!state.move.from || !isTarget) {
+                const targetSquares = lib.chess.game.moves({square: toSquare, verbose: true}).map(move => move.to);
+                const from = (!isTarget && !toPiece) ? null : toSquare; // reset the move in progress when invalid square selected
+                return Object.assign({}, state, {move: {from, targetSquares}});
             }
+
+            // End the move in progress or delay it in case it is a promotion
+            if (!lib.chess.isPromotionMove(fromPiece, toSquare)) {
+                state = performMove(state, state.move.from, toSquare);
+            } else {
+                state.move.promotionSquare = toSquare;
+            }
+
+            return Object.assign({}, state);
         default:
+            state.board.turn = lib.chess.game.turn();
             return state;
     }
 };

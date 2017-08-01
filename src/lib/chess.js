@@ -9,6 +9,9 @@ export const columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
 export const flags = game.FLAGS;
 
+/**
+ * Resets the chess game
+ */
 export const resetGame = () => {
     game.reset();
 
@@ -43,21 +46,40 @@ export const getSquarePosition = (row, col) => {
     return `${columns[col - 1]}${row}`;
 };
 
-
+/**
+ * Computes the square rank based on the algebraic notation of the square
+ * @param {string} square The square position
+ * @returns {number}
+ */
 export const squareRank = (square) => {
     return getSquareCoordinates(square)[0];
 };
 
+/**
+ * Computes the square file based on the algebraic notation of the square
+ * @param {string} square The square position
+ * @returns {number}
+ */
 export const squareFile = (square) => {
     return square[0];
 };
 
-// export const move = (from, to, promotion = null) => {
-//
-// };
+/**
+ * Builds a map that describes each square with the piece placed on the square (null if NA) and the square color light|dark
+ */
+export const getBoardSquares = () => {
+    return _.zipObject(
+        game.SQUARES,
+        game.SQUARES.map(square => ({color: game.square_color(square), piece: game.get(square)}))
+    )
+};
 
-export const getBoardSquares = () => _.zipObject(game.SQUARES, game.SQUARES.map(square => ({color: game.square_color(square), piece: game.get(square)})));
-
+/**
+ * Identify if placing a piece on a square will trigger a promotion
+ * @param {Object} piece The piece to move
+ * @param {string} square The target square
+ * @returns {boolean}
+ */
 export const isPromotionMove = (piece, square) => {
     if (piece.type !== game.PAWN) return false;
 
@@ -66,3 +88,9 @@ export const isPromotionMove = (piece, square) => {
     return ((squareRank(square) === 1 && color === game.BLACK) || (squareRank(square) === 8 && color === game.WHITE));
 };
 
+/**
+ * Computes the alternative chess player color (w or b)
+ * @param {string} color The color to compute the alternative color to
+ * @returns {string} The alternative color
+ */
+export const alternateColor = (color) => (color === game.WHITE ? game.BLACK : game.WHITE);

@@ -21,5 +21,5 @@ export const getActiveTurn = (state) => {
 };
 
 export const getPromotionSquare = (state) => {
-    return state.move.promotion;
+    return state.move.promotionSquare;
 };
