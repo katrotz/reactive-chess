@@ -8,6 +8,12 @@ export const BoardView = styled.View`
     alignItems: center;
 `;
 
+export const BoardColumnarView = styled.View`
+    width: 100%;
+    height: 100%;
+    flexDirection: row
+`;
+
 export const RowView = styled.View`
     flexDirection: row;
     zIndex: 100;
