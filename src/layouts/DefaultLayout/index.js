@@ -1,3 +1,3 @@
-import Component from './DefaultLayout';
+import DefaultLayout from './DefaultLayout';
 
-export default Component;
+export default DefaultLayout;

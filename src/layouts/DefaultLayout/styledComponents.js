@@ -5,4 +5,5 @@ export const ContainerView = styled.View`
     justifyContent: center;
     alignItems: center;
     backgroundColor: #FFFFFF;
+    border: solid gray 1px;
 `;

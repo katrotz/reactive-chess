@@ -12,11 +12,9 @@ export default class App extends Component {
     }
 
     render() {
-        const layout = <DefaultLayout></DefaultLayout>;
-
         return (
             <Provider store={store}>
-                {layout}
+                <DefaultLayout/>
             </Provider>
         );
     }
