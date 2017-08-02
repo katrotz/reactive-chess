@@ -9,7 +9,8 @@ import actions from './../../redux/actions';
 import selectors from './../../redux/selectors';
 import ChessSquare from './../ChessSquare';
 import ChessCemetery from './../ChessCemetery';
-import { BoardView, RowView } from './styledComponents';
+import ChessCoordinates from './../ChessCoordinates';
+import { BoardView, BoardColumnarView, RowView } from './styledComponents';
 
 class ChessBoard extends Component {
     static defaultProps = {
@@ -43,28 +44,40 @@ class ChessBoard extends Component {
                 <ChessCemetery pieces={this.props.captured[this.props.inverted ? 'w' : 'b']}></ChessCemetery>
 
                 <BoardView boardSize={this.props.size}>
-                    {rowIndexes.map((row) =>
-                        <RowView key={row.toString()}>
-                            {colIndexes.map((col) => {
-                                const position = lib.chess.getSquarePosition(row, col);
+                    <ChessCoordinates displayRanks={false} size={squareSize}></ChessCoordinates>
 
-                                const piece = this.props.squares[position].piece;
-                                const color = this.props.squares[position].color;
-                                const isTarget = _.includes(this.props.targets, position);
-                                const isPromotion = (position === this.props.promotionSquare);
+                    <BoardColumnarView>
+                        <ChessCoordinates displayRanks={true} size={squareSize}></ChessCoordinates>
 
-                                return <ChessSquare key={position}
-                                                    position={position}
-                                                    color={color}
-                                                    isTarget={isTarget}
-                                                    isPromotion={isPromotion}
-                                                    piece={piece}
-                                                    size={squareSize}
-                                                    onSelect={this.handleSquareSelect_}>
-                                </ChessSquare>
-                            })}
-                        </RowView>
-                    )}
+                        <View>
+                            {rowIndexes.map((row) =>
+                                <RowView key={row.toString()}>
+                                    {colIndexes.map((col) => {
+                                        const position = lib.chess.getSquarePosition(row, col);
+
+                                        const piece = this.props.squares[position].piece;
+                                        const color = this.props.squares[position].color;
+                                        const isTarget = _.includes(this.props.targets, position);
+                                        const isPromotion = (position === this.props.promotionSquare);
+
+                                        return <ChessSquare key={position}
+                                                            position={position}
+                                                            color={color}
+                                                            isTarget={isTarget}
+                                                            isPromotion={isPromotion}
+                                                            piece={piece}
+                                                            size={squareSize}
+                                                            onSelect={this.handleSquareSelect_}>
+                                        </ChessSquare>
+                                    })}
+                                </RowView>
+                            )}
+                        </View>
+
+                        <ChessCoordinates displayRanks={true} size={squareSize}></ChessCoordinates>
+                    </BoardColumnarView>
+
+                    <ChessCoordinates displayRanks={false} size={squareSize}></ChessCoordinates>
                 </BoardView>
 
                 <ChessCemetery pieces={this.props.captured[this.props.inverted ? 'b' : 'w']}></ChessCemetery>
