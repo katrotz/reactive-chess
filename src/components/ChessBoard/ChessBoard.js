@@ -10,7 +10,7 @@ import selectors from './../../redux/selectors';
 import ChessSquare from './../ChessSquare';
 import ChessCemetery from './../ChessCemetery';
 import ChessCoordinates from './../ChessCoordinates';
-import { BoardView, BoardColumnarView, RowView } from './styledComponents';
+import { BoardWrapView, BoardView, BoardColumnarView, RowView } from './styledComponents';
 
 class ChessBoard extends Component {
     static defaultProps = {
@@ -40,14 +40,14 @@ class ChessBoard extends Component {
         if (this.props.inverted) rowIndexes.reverse();
 
         return (
-            <View>
+            <BoardWrapView boardSize={this.props.size}>
                 <ChessCemetery pieces={this.props.captured[this.props.inverted ? 'w' : 'b']}></ChessCemetery>
 
                 <BoardView boardSize={this.props.size}>
-                    <ChessCoordinates displayRanks={false} size={squareSize}></ChessCoordinates>
+                    {/*<ChessCoordinates displayRanks={false} size={squareSize}></ChessCoordinates>*/}
 
                     <BoardColumnarView>
-                        <ChessCoordinates displayRanks={true} size={squareSize}></ChessCoordinates>
+                        {/*<ChessCoordinates displayRanks={true} size={squareSize}></ChessCoordinates>*/}
 
                         <View>
                             {rowIndexes.map((row) =>
@@ -74,10 +74,10 @@ class ChessBoard extends Component {
                             )}
                         </View>
 
-                        <ChessCoordinates displayRanks={true} size={squareSize}></ChessCoordinates>
+                        {/*<ChessCoordinates displayRanks={true} size={squareSize}></ChessCoordinates>*/}
                     </BoardColumnarView>
 
-                    <ChessCoordinates displayRanks={false} size={squareSize}></ChessCoordinates>
+                    {/*<ChessCoordinates displayRanks={false} size={squareSize}></ChessCoordinates>*/}
                 </BoardView>
 
                 <ChessCemetery pieces={this.props.captured[this.props.inverted ? 'b' : 'w']}></ChessCemetery>
@@ -86,7 +86,7 @@ class ChessBoard extends Component {
                     <Button onPress={() => {this.props.dispatch(actions.invertBoard())}} title="Flip Board" color="#4CD964"/>
                     <Button onPress={() => {this.props.dispatch(actions.resetGame())}} title="Reset" color="#FF3B30"/>
                 </View>
-            </View>
+            </BoardWrapView>
         );
     }
 

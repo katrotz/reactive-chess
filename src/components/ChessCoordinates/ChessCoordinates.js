@@ -15,12 +15,14 @@ export default class ChessCoordinates extends Component {
     render() {
         const ranks = [1, 2, 3, 4, 5, 6, 7, 8];
         const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        const coordinates = this.props.displayRanks ? ranks : files;
         return (
             <CoordinatesView displayRanks={this.props.displayRanks}>
-                {this.props.displayRanks
-                    ? ranks.map((text) => <CoordinateView displayRanks={this.props.displayRanks}><CoordinatesText key={text}>{text}</CoordinatesText></CoordinateView>)
-                    : files.map((text) => <CoordinateView displayRanks={this.props.displayRanks}><CoordinatesText key={text}>{text}</CoordinatesText></CoordinateView>)
-                }
+                {coordinates.map((text) => {
+                    return <CoordinateView key={text} displayRanks={this.props.displayRanks}>
+                        <CoordinatesText key={text}>{text}</CoordinatesText>
+                    </CoordinateView>
+                })}
             </CoordinatesView>
         );
     }

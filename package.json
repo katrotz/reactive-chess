@@ -8,6 +8,7 @@
 	},
 	"dependencies": {
 		"chess.js": "^0.10.2",
+		"graphql": "^0.10.5",
 		"lodash-es": "^4.17.4",
 		"prop-types": "^15.5.10",
 		"react": "16.0.0-beta.3",
@@ -16,7 +17,8 @@
 		"react-redux": "^5.0.5",
 		"redux": "^3.7.2",
 		"reselect": "^3.0.1",
-		"styled-components": "^2.1.1"
+		"styled-components": "^2.1.1",
+		"subscriptions-transport-ws": "^0.8.2"
 	},
 	"devDependencies": {
 		"babel-jest": "20.0.3",

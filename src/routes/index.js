@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
 import RTCHome from './../components/RTCHome';
@@ -10,6 +11,8 @@ export const AppNavigator = StackNavigator({
     Chess: {
         screen: ChessBoard,
     },
+}, {
+    mode: Platform.OS === 'ios' ? 'modal' : 'card'
 });
 
 export default {};
