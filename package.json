@@ -5,6 +5,7 @@
 	"scripts": {
 		"start": "node node_modules/react-native/local-cli/cli.js start",
 		"start:ios": "react-native run-ios",
+		"start:android": "react-native run-android",
 		"postinstall": "react-native upgrade",
 		"test": "jest"
 	},
