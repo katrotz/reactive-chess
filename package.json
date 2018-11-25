@@ -6,7 +6,8 @@
 		"start": "node node_modules/react-native/local-cli/cli.js start",
 		"start:ios": "react-native run-ios",
 		"start:android": "react-native run-android",
-		"postinstall": "react-native upgrade",
+		"upgrade": "react-native upgrade",
+		"clean": "cd ios && xcodebuild clean && cd ../android && ./gradlew clean && cd ..",
 		"test": "jest"
 	},
 	"dependencies": {
@@ -15,7 +16,8 @@
 		"lodash-es": "^4.17.11",
 		"prop-types": "^15.6.2",
 		"react": "^16.6.3",
-		"react-native": "0.57.5",
+		"react-native": "^0.57.5",
+		"react-native-gesture-handler": "^1.0.9",
 		"react-navigation": "^3.0.0",
 		"react-redux": "^5.1.1",
 		"redux": "^4.0.1",

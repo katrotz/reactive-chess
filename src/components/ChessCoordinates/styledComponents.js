@@ -18,4 +18,4 @@ export const CoordinateView = styled.View`
     justifyContent: center;
 `;
 
-export const CoordinatesText = PositionText.extend``;
+export const CoordinatesText = PositionText;

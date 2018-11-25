@@ -1,10 +1,10 @@
 import { Platform } from 'react-native';
-import { StackNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation';
 
 import RTCHome from './../components/RTCHome';
 import ChessBoard from './../components/ChessBoard';
 
-export const AppNavigator = StackNavigator({
+export const AppNavigator = createStackNavigator({
     Home: {
         screen: RTCHome,
     },
