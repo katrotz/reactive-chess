@@ -2,4 +2,4 @@ import { AppRegistry } from 'react-native';
 
 import App from './src';
 
-AppRegistry.registerComponent('reactiveChess', () => App);
+AppRegistry.registerComponent('ReactiveChess', () => App);

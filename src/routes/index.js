@@ -6,12 +6,13 @@ import ChessBoard from './../components/ChessBoard';
 
 export const AppNavigator = createStackNavigator({
     Home: {
-        screen: RTCHome,
+        screen: ChessBoard,
     },
     Chess: {
         screen: ChessBoard,
     },
 }, {
+    initialRouteName: 'Home',
     mode: Platform.OS === 'ios' ? 'modal' : 'card'
 });
 
